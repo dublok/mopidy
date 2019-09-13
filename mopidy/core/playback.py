@@ -544,6 +544,34 @@ class PlaybackController(object):
         # TODO: Wrap backend call in error handling.
         return backend.playback.seek(time_position).get()
 
+    def get_rate(self):
+        """
+        Get the current playback rate.
+
+        :rtype: :class:`float`
+        """
+        backend = self._get_backend(self.get_current_tl_track())
+        if not backend:
+            return 1.0
+        # TODO: Wrap backend call in error handling.
+        return backend.playback.get_rate().get()
+
+    def rate(self, rate):
+        """
+        Set the playback rate.
+
+        :param rate: The playback rate, from 0.1 to 10.0
+        :type rate: :class:`float`
+        :rtype: :class:`True` if successful, else :class:`False`
+        """
+        validation.check_float(rate, min=0.1, max=10.0)
+
+        backend = self._get_backend(self.get_current_tl_track())
+        if not backend:
+            return False
+        # TODO: Wrap backend call in error handling.
+        return backend.playback.rate(rate).get()
+
     def stop(self):
         """Stop playing."""
         if self.get_state() != PlaybackState.STOPPED:

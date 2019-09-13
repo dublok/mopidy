@@ -273,6 +273,28 @@ class PlaybackProvider(object):
         """
         return self.audio.set_position(time_position).get()
 
+    def get_rate(self):
+        """
+        Get the current playback rate.
+
+        *MAY be reimplemented by subclass.*
+
+        :rtype: :class:`float`
+        """
+        return self.audio.get_rate().get()
+
+    def rate(self, rate):
+        """
+        Set the playback rate.
+
+        *MAY be reimplemented by subclass.*
+
+        :param rate: playback rate. 1.0 = normal, 0.5 = slow, 2.0 = fast
+        :type rate: :class:`float`
+        :rtype: :class:`True` if successful, else :class:`False`
+        """
+        return self.audio.set_rate(rate).get()
+
     def stop(self):
         """
         Stop playback.

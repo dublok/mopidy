@@ -24,6 +24,24 @@ Bug fix release.
   regression introduced as part of PR: :issue:`1629`. (Fixes: :issue:`1788`,
   PR: :issue:`1792`)
 
+- Audio: Add playback rate (speed) control
+
+  - :meth:`mopidy.core.PlaybackController.get_rate`
+    get the playback rate
+
+  - :meth:`mopidy.core.PlaybackController.rate`
+    set the playback rate
+
+  To avoid the chipmunk effect you can insert the GStreamer plugin `scaletemp`
+  to the mopidy audio output configuration :confval:`audio/output`:
+
+  Example ``mopidy.conf``:
+
+  .. code-block:: ini
+
+      [audio]
+      output = scaletempo ! autoaudiosink
+
 
 v2.2.3 (2019-06-20)
 ===================

@@ -119,6 +119,9 @@ Playback control
 .. automethod:: mopidy.core.PlaybackController.pause
 .. automethod:: mopidy.core.PlaybackController.resume
 .. automethod:: mopidy.core.PlaybackController.seek
+.. automethod:: mopidy.core.PlaybackController.rate
+.. automethod:: mopidy.core.PlaybackController.get_rate
+
 
 Current track
 -------------

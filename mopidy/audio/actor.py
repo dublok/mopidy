@@ -376,6 +376,10 @@ class _Handler(object):
             self._audio._playbin.send_event(self._audio._pending_metadata)
             self._audio._pending_metadata = None
 
+        if self._audio._rate != 1.0:
+            # restore playback rate
+            self._audio._seek(0)
+
     def on_segment(self, segment):
         gst_logger.debug(
             'Got SEGMENT pad event: '
@@ -415,6 +419,7 @@ class Audio(pykka.ThreadingActor):
         self._pending_uri = None
         self._pending_tags = None
         self._pending_metadata = None
+        self._rate = 1.0
 
         self._playbin = None
         self._outputs = None
@@ -666,14 +671,50 @@ class Audio(pykka.ThreadingActor):
         """
         # TODO: double check seek flags in use.
         gst_position = utils.millisecond_to_clocktime(position)
-        gst_logger.debug('Sending flushing seek: position=%r', gst_position)
+        return self._seek(gst_position)
+
+    def get_rate(self):
+        """
+        Get playback rate
+
+        :rtype: :class:`float`
+        """
+        return self._rate
+
+    def set_rate(self, rate):
+        """
+        Set the playback rate.
+
+        :param rate: the playback rate (1.0 == normal)
+        :type rate: :class:`float`
+        :rtype: :class:`True` if successful, else :class:`False`
+        """
+        # backward playback not supported
+        if rate < 0.1 or rate > 10.0:
+            return False
+
+        self._rate = rate
+
+        # seek to the current play position to set the rate
+        success, gst_position = self._playbin.query_position(Gst.Format.TIME)
+        if not success:
+            logger.debug('Position query failed')
+            return False
+
+        return self._seek(gst_position)
+
+    def _seek(self, gst_position):
         # Send seek event to the queue not the playbin. The default behavior
         # for bins is to forward this event to all sinks. Which results in
         # duplicate seek events making it to appsrc. Since elements are not
         # allowed to act on the seek event, only modify it, this should be safe
         # to do.
-        result = self._queue.seek_simple(
-            Gst.Format.TIME, Gst.SeekFlags.FLUSH, gst_position)
+        gst_logger.debug(
+            'Sending flushing seek: position=%r rate=%r',
+            gst_position, self._rate)
+        result = self._queue.seek(
+            self._rate, Gst.Format.TIME, Gst.SeekFlags.FLUSH, Gst.SeekType.SET,
+            gst_position, Gst.SeekType.NONE, 0.0)
         return result
 
     def start_playback(self):
