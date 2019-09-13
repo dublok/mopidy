@@ -235,6 +235,24 @@ Audio
 - Remove the method :meth:`mopidy.audio.Audio.emit_end_of_stream`, which has
   been deprecated since 1.0. (Fixes: :issue:`1465`, PR: :issue:`1705`)
 
+- Audio: Add playback rate (speed) control
+
+  - :meth:`mopidy.core.PlaybackController.get_rate`
+    get the playback rate
+
+  - :meth:`mopidy.core.PlaybackController.rate`
+    set the playback rate
+
+  To avoid the chipmunk effect you can insert the GStreamer plugin `scaletemp`
+  to the mopidy audio output configuration :confval:`audio/output`:
+
+  Example ``mopidy.conf``:
+
+  .. code-block:: ini
+
+      [audio]
+      output = scaletempo ! autoaudiosink
+
 
 v2.2.4 (UNRELEASED)
 ===================

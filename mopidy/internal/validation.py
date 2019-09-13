@@ -66,6 +66,17 @@ def check_integer(arg, min=None, max=None):
             'Expected number smaller or equal to %d, not %r' % (max, arg))
 
 
+def check_float(arg, min=None, max=None):
+    if not isinstance(arg, float):
+        raise exceptions.ValidationError('Expected an float, not %r' % arg)
+    elif min is not None and arg < min:
+        raise exceptions.ValidationError(
+            'Expected number larger or equal to %g, not %r' % (min, arg))
+    elif max is not None and arg > max:
+        raise exceptions.ValidationError(
+            'Expected number smaller or equal to %g, not %r' % (max, arg))
+
+
 def check_query(arg, fields=SEARCH_FIELDS, list_values=True):
     # TODO: normalize name  -> track_name
     # TODO: normalize value -> [value]

@@ -23,6 +23,7 @@ class DummyAudio(pykka.ThreadingActor):
         self.state = audio.PlaybackState.STOPPED
         self._volume = 0
         self._position = 0
+        self._rate = 1.0
         self._callback = None
         self._uri = None
         self._stream_changed = False
@@ -48,6 +49,13 @@ class DummyAudio(pykka.ThreadingActor):
     def set_position(self, position):
         self._position = position
         audio.AudioListener.send('position_changed', position=position)
+        return True
+
+    def get_rate(self):
+        return self._rate
+
+    def set_rate(self, rate):
+        self._rate = rate
         return True
 
     def start_playback(self):

@@ -120,6 +120,11 @@ class AudioTest(BaseTest):
     def test_set_position(self):
         pass  # TODO
 
+    def test_set_rate(self):
+        self.assertEqual(1.0, self.audio.get_rate().get())
+        self.audio.set_rate(0.7).get()
+        self.assertEqual(0.7, self.audio.get_rate().get())
+
     @unittest.SkipTest
     def test_invalid_output_raises_error(self):
         pass  # TODO
